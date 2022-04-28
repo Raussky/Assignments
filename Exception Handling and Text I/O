@@ -1,0 +1,74 @@
+package com.company;
+//Ex. 12.3, 488 page
+import java.util.Scanner;
+
+public class Ex3_1 {
+    public static void main(String[] args) {
+
+        int[] randomArray = new int[100];
+
+        for (int i = 0; i < randomArray.length; i++) {
+            randomArray[i] = (int) (1 + Math.random() * 10_000);
+        }
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Enter an index in the array for which to display it's value: ");
+
+        try {
+            int indexValue = input.nextInt();
+            System.out.println(randomArray[indexValue]);
+
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("Out Of Bounds");
+        }
+
+        input.close();
+    }
+
+}
+
+package com.company;
+//activity Ex. 12.11, 489 page, book
+import java.util.Scanner;
+import java.io.PrintWriter;
+import java.io.File;
+
+public class Ex3_2 {
+    public static void main(String[] args) throws Exception {
+
+        String toRemove = args[0];
+
+        File sourceFile = new File(args[1]);
+
+        if (!sourceFile.exists()) {
+            System.out.println("The file " + sourceFile.getName() + "does not exist.");
+            System.exit(1);
+        }
+
+        Scanner in = new Scanner(sourceFile);
+
+
+        String str1 = "";
+        String str2 = "";
+
+        while (in.hasNext()) {
+
+            str1 += in.nextLine();
+            str2 = str1.replaceAll(toRemove, "");
+
+        }
+
+        File targetFile = new File(toRemove + "_Revised.txt");
+
+        try (
+                PrintWriter out = new PrintWriter(targetFile);
+        ) {
+            out.print(str2);
+        }
+
+        in.close();
+
+        System.out.println("Your edited file is complete.");
+    }
+}
