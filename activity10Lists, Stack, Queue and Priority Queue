@@ -1,0 +1,78 @@
+package com.company;
+//Ex. 20.1 page 791
+import java.util.*;
+import java.io.*;
+
+public class Exercise_20_01 {
+    public static void main(String[] args) throws Exception {
+        // Check number of arguments passed
+        if (args.length != 1) {
+            System.out.println("Usage: java Exercise_20_01 TextFile");
+            System.exit(1);
+        }
+
+        // Check if file exists
+        File textFile = new File(args[0]);
+        if (!textFile.exists()) {
+            System.out.println("The file " + args[0] + " does not exist.");
+            System.exit(2);
+        }
+
+        // Create a list of string
+        List<String> list = new ArrayList<>();
+
+        try (
+                // Create input file
+                Scanner input = new Scanner(textFile);
+        ) {
+            while (input.hasNext()) {
+                String[] array = input.nextLine().split(" ");
+                for (int i = 0; i < array.length; i++) {
+                    if (array[i].length() > 0 &&
+                            Character.isLetter(array[i].charAt(0))) {
+                        list.add(array[i]);
+                    }
+                }
+            }
+        }
+        // Sort the list in ascending alphabetical order
+        Collections.sort(list);
+
+        // Display the list
+        System.out.println(list);
+    }
+}
+
+package com.company;
+//activity Ex. 20.6 page 792
+import java.util.*;
+
+public class Exercise_20_06 {
+    public static void main(String[] args) {
+
+        List<Integer> arrayList = new ArrayList<>();
+        for (int i = 0; i < 5000000; i++) {
+            arrayList.add(i);
+        }
+        LinkedList<Integer> linkedList = new LinkedList<>(arrayList);
+
+        long iteratorTimerStart = System.currentTimeMillis();
+        ListIterator<Integer> listIterator = linkedList.listIterator();
+        while (listIterator.hasNext()) {
+            listIterator.next();
+        }
+        long iteratorTimerEnd = System.currentTimeMillis();
+
+        System.out.println("Time to traverse the list using an iterator :"
+                + (iteratorTimerEnd - iteratorTimerStart) + " millis");
+
+        long getTimerStart = System.currentTimeMillis();
+        for (int i = 0; i < 5000000; i++) {
+            linkedList.get(i);
+        }
+        long getTimerEnd = System.currentTimeMillis();
+
+        System.out.println("Time to traverse the list using the get(index) method :"
+                + (getTimerEnd - getTimerStart) + " millis");
+    }
+}
