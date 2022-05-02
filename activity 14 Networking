@@ -1,0 +1,115 @@
+import java.io.*;
+import java.net.*;
+import java.util.Date;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+\\Ex. 31.4 page 1169
+public class Client extends Application {
+	
+	DataInputStream fromServer = null;
+
+	private Label label  = new Label("");
+
+	@Override 
+	public void start(Stage primaryStage) {
+
+		StackPane pane = new StackPane();
+		pane.getChildren().add(label);
+
+		Scene scene = new Scene(pane, 300, 75);
+		primaryStage.setTitle("Client by Gadil Rauan"); 
+		primaryStage.setScene(scene); 
+		primaryStage.show(); 
+
+		try {
+			Socket socket = new Socket("localhost", 8000);
+
+			fromServer = new DataInputStream(socket.getInputStream());
+ 
+			label.setText(fromServer.readUTF());
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+import java.io.*;
+import java.net.*;
+import java.util.Date;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
+import javafx.stage.Stage;
+
+public class Exercise31_04Server extends Application {
+
+	private TextArea ta = new TextArea();
+
+	private int threadNo = 0;
+
+	@Override 
+	public void start(Stage primaryStage) {
+		Scene scene = new Scene(new ScrollPane(ta), 450, 200);
+		primaryStage.setTitle("Sever by Gadil Rauan"); 
+		primaryStage.setScene(scene);
+		primaryStage.show(); 
+
+		new Thread(() -> {
+			try {
+				ServerSocket serverSocket = new ServerSocket(8000);
+				ta.appendText("Exercise31_04Sever started at " + new Date() + '\n');
+
+				while (true) {
+					Socket socket = serverSocket.accept();
+
+					Platform.runLater(() -> {
+						ta.appendText("Starting thread " + threadNo++ + '\n');
+
+						InetAddress inetAddress = socket.getInetAddress();
+						ta.appendText("Client IP /" + 
+							inetAddress.getHostAddress() + '\n');
+
+					});
+
+					new Thread(new HandleAClient(socket)).start();
+				}	
+			}
+			catch(IOException ex) {
+				System.err.println(ex);
+			}
+		}).start();
+	}
+
+	
+	class HandleAClient implements Runnable {
+		private Socket socket; // A connected socket
+
+		
+		public HandleAClient(Socket socket) {
+			this.socket = socket;
+		}
+
+		public void run() {
+			try {
+		
+				DataOutputStream outputToClient = new DataOutputStream(
+					socket.getOutputStream());
+          
+				outputToClient.writeUTF("You are visitor " + threadNo);
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+}
