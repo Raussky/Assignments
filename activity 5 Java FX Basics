@@ -15,7 +15,7 @@ public class checkBoard extends Application {
         int count = 0;
         for(int i =0;i<8; i++){
             count++;
-            for (int j = 0; j < 8; j++) {//row
+            for (int j = 0; j < 8; j++) {
                 Rectangle rec = new Rectangle(100,100,100,100);
                 rec.setFill(Color.BLACK);
                 if (count % 2 == 0) {
